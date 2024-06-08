@@ -8,7 +8,7 @@ class Cactus
 {
       Q_OBJECT
 public:
-    Cactus(QObject *parent = nullptr);
+    Cactus(QGraphicsItem *parent = 0,QGraphicsScene *scene=0);
 private slots:
     void move();
 };

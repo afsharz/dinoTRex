@@ -7,6 +7,7 @@
 #include <QImage>
 #include <QWidget>
 #include "cactus.h"
+#include "score.h"
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -19,18 +20,15 @@ int main(int argc, char *argv[])
    scene->addItem(player);
    player->setFlag(QGraphicsItem::ItemIsFocusable);
    player->setFocus();
-   //QTimer *tim= new QTimer;
-   Cactus *cac=new Cactus;
-   scene->addItem(cac);
+   Cactus *cac =new Cactus(0,scene);
+    scene->addItem(cac);
+    Score score;
+    scene->addItem(&score);
     QGraphicsView * view = new QGraphicsView(scene);
       view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
       view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
          view->setFixedSize(800,600);
          scene->setSceneRect(0,0,800,600);
-       //  player->setOffset(100,100);
-   //  player->setPos(view->width()/7,view->height() - 150);
-    // qDebug(" x=%d      y=%d",view->width()/7,view->height() - 150);
        view->show();
     return a.exec();
 }

@@ -17,7 +17,7 @@ void TRex::jump()
 {
     setPos(x(),y()-height_of_jump);
    timer= new QTimer;
-    timer->singleShot(200,this,SLOT(land()));
+    timer->singleShot(400,this,SLOT(land()));
 
 }
 void TRex::keyPressEvent(QKeyEvent *event)

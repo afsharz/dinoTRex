@@ -2,10 +2,10 @@
 #define TREX_H
 #include <QGraphicsItem>
 #include <QKeyEvent>
-#include <QGraphicsPixmapItem>>
+#include <QGraphicsPixmapItem>
 #include <QObject>
 #include <QTimer>
-#define height_of_jump 50
+#define height_of_jump 150
 #define dinoX 114
 #define dinoY 450
 
@@ -14,7 +14,6 @@ class TRex : public QObject ,public QGraphicsPixmapItem
     Q_OBJECT
 public:
     explicit TRex(QObject *parent = nullptr);
-  // TRex();
    void jump();
    void move();
 
