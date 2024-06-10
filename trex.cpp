@@ -5,7 +5,8 @@
 #include <QPropertyAnimation>
 #include "game.h"
 #define  duration 5
-#define min_dalay 3000  //minimum delay between showing up two Cactus on screen
+#define min_dalay 2500  //minimum delay between showing up two Cactus on screen
+#define jumpDuration 1000
 //#include <QMediaPlayer>
 TRex::TRex(QObject *parent)
     : QObject{parent}
@@ -23,30 +24,20 @@ TRex::TRex(Game *game)
 
 void TRex::jump()
 {
-   qDebug("try to jump1");
-    if(y()==dinoY){
+
+    if(pos().y()==dinoY){
+
         QPropertyAnimation *anim = new QPropertyAnimation(this, "pos");
 
-                anim->setDuration(1500);
+                anim->setDuration(jumpDuration);
                 anim->setStartValue(pos());
                 anim->setEndValue(QPointF(pos().x(), pos().y() - height_of_jump));
-               //  qDebug("try to jump2");
+                 connect(anim,SIGNAL(finished()),this,SLOT(land()));
                 anim->start(QAbstractAnimation::DeleteWhenStopped);
-              //   qDebug("try to jump3");
-        timer= new QTimer;
-        timer->singleShot(1500,this,SLOT(land()));
     }
 }
 
-void TRex::timeout()
-{
-    if(jumpTime->elapsed() <= duration )
-    {
-        setPos(x(),y()-height_of_jump);
-    }
-    else
-        jumpD->stop();
-}
+
 void TRex::keyPressEvent(QKeyEvent *event)
 {
     if(event->key()== Qt::Key_Up)
@@ -56,27 +47,30 @@ void TRex::keyPressEvent(QKeyEvent *event)
 void TRex::stoptiemr1()
 {
     timer1->stop();
+      for (QTimer *timer : qAsConst(singleShotTimers))
+        timer->stop();
+        delete timer;
 }
 
 
 void TRex::land()
 {
     QPropertyAnimation *anim = new QPropertyAnimation(this, "pos");
-            anim->setDuration(1500);
+            anim->setDuration(jumpDuration);
             anim->setStartValue(pos());
             anim->setEndValue(QPointF(pos().x(), pos().y() + height_of_jump));
             anim->start(QAbstractAnimation::DeleteWhenStopped);
 }
 void TRex::spawn()
 {
-    int delay=(rand()%20 +10)*200;
-    QTimer *timer=new QTimer;
-    timer->singleShot(delay,this,SLOT(makeCactus()));
+    int delay = (rand() % 20 + 10) * 200;
+QTimer *timer = new QTimer;
+connect(timer, &QTimer::timeout, this, &TRex::makeCactus);
+singleShotTimers.append(timer);
+timer->setSingleShot(true);
+timer->start(delay);
 }
 
-void TRex::makeCactus()
-{
+void TRex::makeCactus(){
     Cactus *Barrier=new Cactus(g,g->scene);
-    scene()->addItem(Barrier);
-}
-
+    scene()->addItem(Barrier);}

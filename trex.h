@@ -25,13 +25,11 @@ public:
     QTimer *timer;
     QTimer *timer1;
     Game *g;
-    QTimer *jumpD;
-    QElapsedTimer *jumpTime;
+    QList<QTimer*> singleShotTimers;
     signals:
 private slots:
  void land();
  void jump();
- void timeout();
 void makeCactus();
     void spawn();
 };

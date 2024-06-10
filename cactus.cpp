@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <QGraphicsScene>
 #include "game.h"
+#include <QMessageBox>
+#include <QMainWindow>
 #define CacX scene->width()
 #define CacY dinoY+ g->player->sceneBoundingRect().height() - boundingRect().height()
 Cactus::Cactus(QGraphicsItem *parent)
@@ -14,7 +16,6 @@ Cactus::Cactus(Game *g,QGraphicsScene *scene)
     :g(g)
 {
 int random=rand()%2;
-//connect(this,SIGNAL(collision()),g,SLOT(collision()));
 switch (random)
 {
     case 0:
@@ -28,17 +29,7 @@ switch (random)
     break;
     }
 }
-
-QList<QGraphicsItem *> scene_items;
-   QGraphicsItem *item = nullptr;
-   scene_items = scene->items(Qt::AscendingOrder);
-   for (int i = 0; i < scene_items.size(); i++)
-   {
-       item = scene_items.at(i);
-       if (qgraphicsitem_cast<TRex*>(item))
-           break;
-   }
-    setPos(CacX,CacY);//+5 واسه اینکه کاکتوس یه ذره پایین تر از دایناسور باشه
+    setPos(CacX,CacY+5);//+5 واسه اینکه کاکتوس یه ذره پایین تر از دایناسور باشه
     timer=new QTimer;
     connect(timer,SIGNAL(timeout()),this,SLOT(move()));
     timer->start(20);
@@ -50,24 +41,21 @@ void Cactus::move()
        QList<QGraphicsItem *> colliding_items = collidingItems();
        for(int i=0;i<colliding_items.size();i++)
        {
-           if (typeid(*colliding_items.at(i))==typeid(TRex))
+           if (typeid(*(colliding_items.at(i)))==typeid(TRex))
            {
+                (g->player)->stoptiemr1();
                flag=true;
-
-               qDebug()<<"timer 1 stoped ";
                QList<QGraphicsItem *> items=scene()->items();
                for(int i=0;i<items.size();i++)
                {
                    if(typeid(*items.at(i))==typeid(Cactus))
                       dynamic_cast<Cactus*>(items.at(i))->timer->stop();
-                   dynamic_cast<Cactus*>(items.at(i))->timer->stop();
-                   //delete g;
+           //  QMessageBox::information(nullptr, "Game Over", "You Failed the Game!");
+
                }
 
            }
        }
-       if(flag)
-              dynamic_cast<TRex*> (g->player)->stoptiemr1();
     if(x()+this->boundingRect().width()>0)
         this->setPos(x()-length_of_move,y());
     else if(x()+this->boundingRect().width()<=0)
