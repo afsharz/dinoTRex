@@ -1,8 +1,10 @@
 #include "score.h"
 #include <QString>
 #include <QFont>
-//#include <QColor>
-Score::Score()
+#include "game.h"
+
+Score::Score(Game *g)
+    :g(g)
 {
     score=0;
     setPlainText(QString("SCORE : ")+QString::number(score));
@@ -10,7 +12,13 @@ Score::Score()
     setDefaultTextColor(Qt::black);
 }
 
+void Score::increase()
+{
+    score++;
+    setPlainText(QString("SCORE : ")+QString::number(score));
+}
+
 int Score::getScore()
 {
-
+return score;
 }

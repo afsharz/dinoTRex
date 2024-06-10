@@ -5,25 +5,35 @@
 #include <QGraphicsPixmapItem>
 #include <QObject>
 #include <QTimer>
-#define height_of_jump 150
+#include <QElapsedTimer>
+#define height_of_jump 200
 #define dinoX 114
 #define dinoY 450
 
+class Game;
 class TRex : public QObject ,public QGraphicsPixmapItem
 {
     Q_OBJECT
+     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
 public:
     explicit TRex(QObject *parent = nullptr);
-   void jump();
-   void move();
-
-void keyPressEvent(QKeyEvent *event)override;
-private:
-QTimer *timer;
-signals:
-
+    TRex(Game *game);
+    void move();
+    void keyPressEvent(QKeyEvent *event)override;
+    void stoptiemr1();
+    private:
+    QTimer *timer;
+    QTimer *timer1;
+    Game *g;
+    QTimer *jumpD;
+    QElapsedTimer *jumpTime;
+    signals:
 private slots:
  void land();
+ void jump();
+ void timeout();
+void makeCactus();
+    void spawn();
 };
 
 #endif // TREX_H

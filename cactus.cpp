@@ -4,11 +4,17 @@
 #include <QList>
 #include <stdlib.h>
 #include <QGraphicsScene>
-Cactus::Cactus(QGraphicsItem *parent,QGraphicsScene *scene)
+#include "game.h"
+#define CacX scene->width()
+#define CacY dinoY+ g->player->sceneBoundingRect().height() - boundingRect().height()
+Cactus::Cactus(QGraphicsItem *parent)
     : QObject(), QGraphicsPixmapItem(parent)
+{}
+Cactus::Cactus(Game *g,QGraphicsScene *scene)
+    :g(g)
 {
 int random=rand()%2;
-QTimer *timer;
+//connect(this,SIGNAL(collision()),g,SLOT(collision()));
 switch (random)
 {
     case 0:
@@ -32,21 +38,41 @@ QList<QGraphicsItem *> scene_items;
        if (qgraphicsitem_cast<TRex*>(item))
            break;
    }
-    int x=scene->width();
-    QRectF trexRect = item->sceneBoundingRect();
-           int y = trexRect.bottom() - boundingRect().height();
-    setPos(x,y+5);//+5 is for cactus to be a little downer
+    setPos(CacX,CacY);//+5 واسه اینکه کاکتوس یه ذره پایین تر از دایناسور باشه
     timer=new QTimer;
     connect(timer,SIGNAL(timeout()),this,SLOT(move()));
-    timer->start(100);
+    timer->start(20);
 }
 
 void Cactus::move()
 {
-    if(x()>0)
+    bool flag=false;
+       QList<QGraphicsItem *> colliding_items = collidingItems();
+       for(int i=0;i<colliding_items.size();i++)
+       {
+           if (typeid(*colliding_items.at(i))==typeid(TRex))
+           {
+               flag=true;
+
+               qDebug()<<"timer 1 stoped ";
+               QList<QGraphicsItem *> items=scene()->items();
+               for(int i=0;i<items.size();i++)
+               {
+                   if(typeid(*items.at(i))==typeid(Cactus))
+                      dynamic_cast<Cactus*>(items.at(i))->timer->stop();
+                   dynamic_cast<Cactus*>(items.at(i))->timer->stop();
+                   //delete g;
+               }
+
+           }
+       }
+       if(flag)
+              dynamic_cast<TRex*> (g->player)->stoptiemr1();
+    if(x()+this->boundingRect().width()>0)
         this->setPos(x()-length_of_move,y());
-    else if(x()-20<=0)
+    else if(x()+this->boundingRect().width()<=0)
     {
+        g->score->increase();
         scene()->removeItem(this);
         delete this;
     }
