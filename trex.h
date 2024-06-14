@@ -5,7 +5,7 @@
 #include <QGraphicsPixmapItem>
 #include <QObject>
 #include <QTimer>
-#include <QElapsedTimer>
+#include <QMediaPlayer>
 #define height_of_jump 200
 #define dinoX 114
 #define dinoY 450
@@ -21,17 +21,19 @@ public:
     void move();
     void keyPressEvent(QKeyEvent *event)override;
     void stoptiemr1();
+private slots:
+    void land();
+    void jump();
+    void makeCactus();
+    void spawn();
     private:
     QTimer *timer;
     QTimer *timer1;
     Game *g;
     QList<QTimer*> singleShotTimers;
+    QMediaPlayer* jumpsound;
     signals:
-private slots:
- void land();
- void jump();
-void makeCactus();
-    void spawn();
+
 };
 
 #endif // TREX_H

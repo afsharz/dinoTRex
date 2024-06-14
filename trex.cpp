@@ -3,11 +3,13 @@
 #include <QTimer>
 #include <qelapsedtimer.h>
 #include <QPropertyAnimation>
+#include <QUrl>
+#include <QAudioOutput>
 #include "game.h"
 #define  duration 5
 #define min_dalay 2500  //minimum delay between showing up two Cactus on screen
-#define jumpDuration 1000
-//#include <QMediaPlayer>
+#define jumpDuration 650
+
 TRex::TRex(QObject *parent)
     : QObject{parent}
 {}
@@ -20,6 +22,11 @@ TRex::TRex(Game *game)
     timer1=new QTimer;
     connect(timer1,SIGNAL(timeout()),this,SLOT(spawn()));
     timer1->start(min_dalay);
+    jumpsound=new QMediaPlayer(this);
+    jumpsound->setSource(QUrl("qrc:/sounds/cartoon-jump-6462.mp3"));
+    QAudioOutput* audioOutput = new QAudioOutput(this);
+    audioOutput->setVolume(1.0); // Set volume to maximum (1.0 corresponds to 100%)
+    jumpsound->setAudioOutput(audioOutput);
 }
 
 void TRex::jump()
@@ -28,12 +35,18 @@ void TRex::jump()
     if(pos().y()==dinoY){
 
         QPropertyAnimation *anim = new QPropertyAnimation(this, "pos");
+        anim->setDuration(jumpDuration);
+        anim->setStartValue(pos());
+        anim->setEndValue(QPointF(pos().x(), pos().y() - height_of_jump));
+        connect(anim,SIGNAL(finished()),this,SLOT(land()));
+        anim->start(QAbstractAnimation::DeleteWhenStopped);
+        if (jumpsound->playbackState() == QMediaPlayer::PlayingState){
+            jumpsound->setPosition(0);
+        }
+        else if (jumpsound->playbackState() == QMediaPlayer::StoppedState){
 
-                anim->setDuration(jumpDuration);
-                anim->setStartValue(pos());
-                anim->setEndValue(QPointF(pos().x(), pos().y() - height_of_jump));
-                 connect(anim,SIGNAL(finished()),this,SLOT(land()));
-                anim->start(QAbstractAnimation::DeleteWhenStopped);
+            jumpsound->play();
+        }
     }
 }
 

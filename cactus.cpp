@@ -7,6 +7,7 @@
 #include "game.h"
 #include <QMessageBox>
 #include <QMainWindow>
+#include "cloud.h"
 #define CacX scene->width()
 #define CacY dinoY+ g->player->sceneBoundingRect().height() - boundingRect().height()
 Cactus::Cactus(QGraphicsItem *parent)
@@ -35,25 +36,34 @@ switch (random)
     timer->start(20);
 }
 
+Cactus::~Cactus()
+{
+    delete timer;
+}
+
+void Cactus::stopTimer()
+{
+    timer->stop();
+}
+
 void Cactus::move()
 {
-    bool flag=false;
        QList<QGraphicsItem *> colliding_items = collidingItems();
        for(int i=0;i<colliding_items.size();i++)
        {
            if (typeid(*(colliding_items.at(i)))==typeid(TRex))
            {
                 (g->player)->stoptiemr1();
-               flag=true;
+               g->stopCloudTimer();
                QList<QGraphicsItem *> items=scene()->items();
                for(int i=0;i<items.size();i++)
                {
                    if(typeid(*items.at(i))==typeid(Cactus))
-                      dynamic_cast<Cactus*>(items.at(i))->timer->stop();
-           //  QMessageBox::information(nullptr, "Game Over", "You Failed the Game!");
-
+                       dynamic_cast<Cactus*>(items.at(i))->stopTimer();
+                   else if (typeid(*items.at(i))==typeid(cloud))
+                       dynamic_cast<cloud*>(items.at(i))->stopTimer();
                }
-
+               QMessageBox::information(nullptr, "Game Over", "You Failed the Game!");
            }
        }
     if(x()+this->boundingRect().width()>0)

@@ -14,6 +14,8 @@ class Cactus
 public:
     Cactus(QGraphicsItem *parent = 0);
     Cactus(Game *g,QGraphicsScene *scene);
+    ~Cactus();
+    void stopTimer();
 private:
     Game *g;
 QTimer *timer;
